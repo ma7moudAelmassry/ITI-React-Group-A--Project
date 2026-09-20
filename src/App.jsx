@@ -1,14 +1,18 @@
-import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import './App.css'
+import { Link, Route, Routes } from "react-router-dom";
+import Navbar from "./components/Navbar";
 
-function App() {
 
+
+export default function App() {
   return (
     <>
-        <h1 className="text-3xl font-bold text-sky-600">Hello World</h1>
-    </>
-  )
-}
 
-export default App
+      <Navbar />
+
+   
+      <footer className="footer">
+        This product uses the TMDB API but is not endorsed or certified by TMDB.
+      </footer>
+    </>
+  );
+}
