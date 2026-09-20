@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useLocation, useSearchParams } from "react-router-dom";
+import { Link, useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import "./Design/Navbar.css";
 
 
@@ -41,6 +41,7 @@ function SearchIcon() {
 export default function Navbar({ wishlistCount = 0, user = null, onLogout }) {
   const { pathname } = useLocation();
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
 
   const [query, setQuery] = useState("");
   const [open, setOpen] = useState(false);
@@ -53,6 +54,14 @@ export default function Navbar({ wishlistCount = 0, user = null, onLogout }) {
 
   const cls = (active) => (active ? "fk-link is-active" : "fk-link");
   const current = (active) => (active ? "page" : undefined);
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    const nextQuery = query.trim();
+    if (!nextQuery) return;
+    navigate(`/search?query=${encodeURIComponent(nextQuery)}`);
+    setOpen(false);
+  };
 
 
   useEffect(() => {
@@ -99,8 +108,7 @@ export default function Navbar({ wishlistCount = 0, user = null, onLogout }) {
           <form
             className="fk-search"
             role="search"
-            action="/search"
-            method="get"
+            onSubmit={handleSearch}
             onClick={(e) => e.stopPropagation()}
           >
             <input

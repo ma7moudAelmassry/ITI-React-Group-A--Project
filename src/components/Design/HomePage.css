@@ -50,6 +50,14 @@
   display: block;
 }
 
+.movie-poster-fallback {
+  display: grid;
+  place-items: center;
+  background: #2a2a2a;
+  color: #888;
+  font-size: 0.95rem;
+}
+
 .movie-info {
   padding: 15px;
 }
