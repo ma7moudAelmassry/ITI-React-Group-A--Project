@@ -1,3 +1,6 @@
+# اعمل ملف .env في الملف الكبير فريح package.json وحط فيه ال ApiKey
+
+
 # React + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
