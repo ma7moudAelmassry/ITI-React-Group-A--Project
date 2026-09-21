@@ -1,8 +1,12 @@
 import { useEffect, useState } from "react";
-import { fetchNowPlaying, imageUrl } from "../../api/tmdb";
+import { useSearchParams, Link } from "react-router-dom";
+import { fetchNowPlaying, fetchSearchMovies, imageUrl } from "../../api/tmdb";
 import "./HomePage.css";
 
 export default function HomePage() {
+  const [searchParams] = useSearchParams();
+  const query = searchParams.get("query") || "";
+
   const [movies, setMovies] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -10,12 +14,20 @@ export default function HomePage() {
   const [totalPages, setTotalPages] = useState(1);
 
   useEffect(() => {
+    setCurrentPage(1);
+  }, [query]);
+
+  useEffect(() => {
     let cancelled = false;
 
     setLoading(true);
     setError(null);
 
-    fetchNowPlaying(currentPage)
+    const apiCall = query
+      ? fetchSearchMovies(query, currentPage)
+      : fetchNowPlaying(currentPage);
+
+    apiCall
       .then((data) => {
         if (cancelled) return;
         setMovies(data.results || []);
@@ -33,7 +45,7 @@ export default function HomePage() {
     return () => {
       cancelled = true;
     };
-  }, [currentPage]);
+  }, [currentPage, query]);
 
   const getPageNumbers = () => {
     const pages = [];
@@ -61,61 +73,73 @@ export default function HomePage() {
 
   return (
     <div className="home-container">
-      <h1 className="section-title">Now Playing Movies</h1>
-      
+      {query && <h2 className="search-heading">Search results for: "{query}"</h2>}
+
       <div className="movies-grid">
-        {movies.map((movie) => {
-          const poster = imageUrl(movie.poster_path, "w500");
-          return (
-          <div key={movie.id} className="movie-card">
-            {poster ? (
-              <img
-                src={poster}
-                alt={movie.title}
-                className="movie-poster"
-              />
-            ) : (
-              <div className="movie-poster movie-poster-fallback" aria-hidden="true">
-                No poster
-              </div>
-            )}
-            <div className="movie-info">
-              <h3 className="movie-title">{movie.title}</h3>
-              <p className="movie-rating">⭐ Rating: {movie.vote_average?.toFixed(1)} / 10</p>
-            </div>
-          </div>
-          );
-        })}
+        {movies.length > 0 ? (
+          movies.map((movie) => {
+            const poster = imageUrl(movie.poster_path, "w500");
+            return (
+              <Link 
+                to={`/movie/${movie.id}`} 
+                key={movie.id} 
+                className="movie-card-link" 
+                style={{ textDecoration: 'none', color: 'inherit' }}
+              >
+                <div className="movie-card">
+                  {poster ? (
+                    <img
+                      src={poster}
+                      alt={movie.title}
+                      className="movie-poster"
+                    />
+                  ) : (
+                    <div className="movie-poster movie-poster-fallback" aria-hidden="true">
+                      No poster
+                    </div>
+                  )}
+                  <div className="movie-info">
+                    <h3 className="movie-title">{movie.title}</h3>
+                    <p className="movie-rating">⭐ Rating: {movie.vote_average?.toFixed(1)} / 10</p>
+                  </div>
+                </div>
+              </Link>
+            );
+          })
+        ) : (
+          <p className="status-message">No movies found.</p>
+        )}
       </div>
 
-    
-      <div className="pagination-container">
-        <button 
-          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-          disabled={currentPage === 1}
-          className="pagination-btn"
-        >
-          Prev
-        </button>
-
-        {getPageNumbers().map((number) => (
-          <button
-            key={number}
-            onClick={() => setCurrentPage(number)}
-            className={`pagination-btn ${currentPage === number ? "active" : ""}`}
+      {totalPages > 1 && (
+        <div className="pagination-container">
+          <button 
+            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+            disabled={currentPage === 1}
+            className="pagination-btn"
           >
-            {number}
+            Prev
           </button>
-        ))}
 
-        <button 
-          onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-          disabled={currentPage === totalPages}
-          className="pagination-btn"
-        >
-          Next
-        </button>
-      </div>
+          {getPageNumbers().map((number) => (
+            <button
+              key={number}
+              onClick={() => setCurrentPage(number)}
+              className={`pagination-btn ${currentPage === number ? "active" : ""}`}
+            >
+              {number}
+            </button>
+          ))}
+
+          <button 
+            onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+            disabled={currentPage === totalPages}
+            className="pagination-btn"
+          >
+            Next
+          </button>
+        </div>
+      )}
     </div>
   );
 }

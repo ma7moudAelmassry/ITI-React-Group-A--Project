@@ -23,6 +23,18 @@ export function fetchNowPlaying(page = 1) {
   return tmdbFetch(`/movie/now_playing?language=en-US&page=${page}`);
 }
 
+
+export function fetchSearchMovies(query, page = 1) {
+  return tmdbFetch(`/search/movie?query=${encodeURIComponent(query)}&language=en-US&page=${page}`);
+}
+
 export function imageUrl(path, size = "w500") {
   return path ? `https://image.tmdb.org/t/p/${size}${path}` : null;
+}
+
+export function fetchMovieDetails(movieId) {
+  return tmdbFetch(`/movie/${movieId}?language=en-US`);
+}
+export function fetchMovieReviews(movieId) {
+  return tmdbFetch(`/movie/${movieId}/reviews?language=en-US&page=1`);
 }
