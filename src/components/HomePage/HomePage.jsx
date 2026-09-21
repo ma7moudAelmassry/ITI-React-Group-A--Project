@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { fetchNowPlaying, imageUrl } from "../api/tmdb";
-import "./Design/HomePage.css";
+import { fetchNowPlaying, imageUrl } from "../../api/tmdb";
+import "./HomePage.css";
 
 export default function HomePage() {
   const [movies, setMovies] = useState([]);

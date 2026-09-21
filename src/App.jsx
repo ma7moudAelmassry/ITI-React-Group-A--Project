@@ -1,6 +1,6 @@
 import { Routes, Route, useSearchParams } from "react-router-dom";
-import Navbar from "./components/Navbar";
-import HomePage from "./components/HomePage";
+import Navbar from "./components/Navbar/Navbar";
+import HomePage from "./components/HomePage/HomePage";
 import PlaceholderPage from "./components/PlaceholderPage";
 import "./App.css";
 
