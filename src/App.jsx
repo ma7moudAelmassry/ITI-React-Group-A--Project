@@ -2,7 +2,9 @@ import { Routes, Route, useSearchParams } from "react-router-dom";
 import Navbar from "./components/Navbar/Navbar";
 import HomePage from "./components/HomePage/HomePage";
 import PlaceholderPage from "./components/PlaceholderPage";
+import Chatbot from "./components/Chatbot/Chatbot";
 import "./App.css";
+
 
 function SearchPage() {
   const [searchParams] = useSearchParams();
@@ -44,6 +46,10 @@ export default function App() {
           />
         </Routes>
       </main>
+
+      
+      <Chatbot/>
+      
 
       <footer className="footer">
         This product uses the TMDB API but is not endorsed or certified by TMDB.
