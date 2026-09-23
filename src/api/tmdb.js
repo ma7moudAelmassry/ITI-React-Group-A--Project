@@ -38,3 +38,24 @@ export function fetchMovieDetails(movieId) {
 export function fetchMovieReviews(movieId) {
   return tmdbFetch(`/movie/${movieId}/reviews?language=en-US&page=1`);
 }
+
+// TV-Show Section
+export function fetchTvOnTheAir(page = 1) {
+  return tmdbFetch(`/tv/on_the_air?language=en-US&page=${page}`);
+}
+
+export function fetchTvPopular(page = 1) {
+  return tmdbFetch(`/tv/popular?language=en-US&page=${page}`);
+}
+
+export function fetchSearchTv(query, page = 1) {
+  return tmdbFetch(`/search/tv?query=${encodeURIComponent(query)}&language=en-US&page=${page}`);
+}
+
+export function fetchTvDetails(tvId) {
+  return tmdbFetch(`/tv/${tvId}?language=en-US`);
+}
+
+export function fetchTvReviews(tvId) {
+  return tmdbFetch(`/tv/${tvId}/reviews?language=en-US&page=1`);
+}

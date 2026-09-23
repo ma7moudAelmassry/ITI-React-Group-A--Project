@@ -1,7 +1,9 @@
 import { Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar/Navbar";
 import HomePage from "./components/HomePage/HomePage";
-import MovieDetails from "./components/MovieDetails/MovieDetails"; 
+import MovieDetails from "./components/MovieDetails/MovieDetails";
+import TvShows from "./components/TvShows/TvShows";
+import TvDetails from "./components/TvDetails/TvDetails";
 import PlaceholderPage from "./components/PlaceholderPage";
 import Chatbot from "./components/Chatbot/Chatbot";
 import "./App.css";
@@ -16,7 +18,10 @@ export default function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/search" element={<HomePage />} />
           <Route path="/movie/:id" element={<MovieDetails />} /> 
-          <Route path="/tv" element={<PlaceholderPage title="TV shows" />} />
+
+          <Route path="/tv" element={<TvShows />} />
+          <Route path="/tv/:id" element={<TvDetails />} />
+          
           <Route path="/wishlist" element={<PlaceholderPage title="Wishlist" />} />
           <Route path="/login" element={<PlaceholderPage title="Log in" />} />
           <Route path="/register" element={<PlaceholderPage title="Sign up" />} />
