@@ -1,5 +1,4 @@
-const ACCESS_TOKEN =
-  "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI0ZGJlYzY5OTRhYWJiMDcxYjc1ODlkMWFkNTI0YjQ4YSIsIm5iZiI6MTc4OTkyMTY0MC4yNDg5OTk4LCJzdWIiOiI2YWIwMDk2ODUxYTg1ZWIzZTA0YzhiOWUiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.izblZEP668jKD3lGxrp2xPPIMpWx6dLcY6aZmxRMVkc";
+const ACCESS_TOKEN = import.meta.env.VITE_TMDB_ACCESS_TOKEN;
 
 const BASE_URL = "https://api.themoviedb.org/3";
 
@@ -13,30 +12,40 @@ async function tmdbFetch(path) {
   });
 
   if (!response.ok) {
-    throw new Error(`Failed to fetch: ${response.status}`);
+    throw new Error(`TMDB request failed: ${response.status}`);
   }
 
   return response.json();
 }
 
-export function fetchNowPlaying(page = 1) {
-  return tmdbFetch(`/movie/now_playing?language=en-US&page=${page}`);
-}
-
-
+// Search for a specific movie
 export function fetchSearchMovies(query, page = 1) {
-  return tmdbFetch(`/search/movie?query=${encodeURIComponent(query)}&language=en-US&page=${page}`);
+  return tmdbFetch(
+    `/search/movie?query=${encodeURIComponent(
+      query
+    )}&language=en-US&page=${page}`
+  );
 }
 
-export function imageUrl(path, size = "w500") {
-  return path ? `https://image.tmdb.org/t/p/${size}${path}` : null;
+// Get currently playing movies
+export function fetchNowPlaying(page = 1) {
+  return tmdbFetch(
+    `/movie/now_playing?language=en-US&page=${page}`
+  );
 }
 
+// Get movie details
 export function fetchMovieDetails(movieId) {
-  return tmdbFetch(`/movie/${movieId}?language=en-US`);
+  return tmdbFetch(
+    `/movie/${movieId}?language=en-US`
+  );
 }
+
+// Get movie reviews
 export function fetchMovieReviews(movieId) {
-  return tmdbFetch(`/movie/${movieId}/reviews?language=en-US&page=1`);
+  return tmdbFetch(
+    `/movie/${movieId}/reviews?language=en-US&page=1`
+  );
 }
 
 // TV-Show Section
@@ -49,7 +58,9 @@ export function fetchTvPopular(page = 1) {
 }
 
 export function fetchSearchTv(query, page = 1) {
-  return tmdbFetch(`/search/tv?query=${encodeURIComponent(query)}&language=en-US&page=${page}`);
+  return tmdbFetch(
+    `/search/tv?query=${encodeURIComponent(query)}&language=en-US&page=${page}`
+  );
 }
 
 export function fetchTvDetails(tvId) {
@@ -58,4 +69,41 @@ export function fetchTvDetails(tvId) {
 
 export function fetchTvReviews(tvId) {
   return tmdbFetch(`/tv/${tvId}/reviews?language=en-US&page=1`);
+}
+
+// Discover movies using filters
+export function discoverMovies(
+  { year, genreId, page = 1 } = {}
+) {
+  const params = new URLSearchParams({
+    language: "en-US",
+    sort_by: "popularity.desc",
+    page: page.toString(),
+  });
+
+  if (year) {
+    params.append("primary_release_year", year);
+  }
+
+  if (genreId) {
+    params.append("with_genres", genreId);
+  }
+
+  return tmdbFetch(
+    `/discover/movie?${params.toString()}`
+  );
+}
+
+// Get similar movies
+export function fetchSimilarMovies(movieId) {
+  return tmdbFetch(
+    `/movie/${movieId}/similar?language=en-US&page=1`
+  );
+}
+
+// Convert poster path to full image URL
+export function imageUrl(path, size = "w500") {
+  return path
+    ? `https://image.tmdb.org/t/p/${size}${path}`
+    : null;
 }
