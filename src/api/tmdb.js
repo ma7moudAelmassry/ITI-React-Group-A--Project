@@ -94,6 +94,27 @@ export function discoverMovies(
   );
 }
 
+// Discover TV shows using filters
+export function discoverTv(
+  { year, genreId, page = 1 } = {}
+) {
+  const params = new URLSearchParams({
+    language: "en-US",
+    sort_by: "popularity.desc",
+    page: page.toString(),
+  });
+
+  if (year) {
+    params.append("first_air_date_year", year);
+  }
+
+  if (genreId) {
+    params.append("with_genres", genreId);
+  }
+
+  return tmdbFetch(`/discover/tv?${params.toString()}`);
+}
+
 // Get similar movies
 export function fetchSimilarMovies(movieId) {
   return tmdbFetch(

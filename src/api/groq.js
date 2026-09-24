@@ -5,174 +5,163 @@ const groq = new Groq({
   dangerouslyAllowBrowser: true,
 });
 
-
 // Analyze the user's question
-export async function analyzeQuestion(message) {
-  const response =
-    await groq.chat.completions.create({
-      model: "openai/gpt-oss-20b",
+export async function analyzeQuestion(message, conversation = []) {
+  const response = await groq.chat.completions.create({
+    model: "openai/gpt-oss-20b",
 
-      messages: [
-        {
-          role: "system",
+    messages: [
+      {
+        role: "system",
 
-          content: `
-You are a movie search assistant.
+        content: `
+You are a movie and TV show search assistant.
 
 Your job is to analyze the user's message
-and determine what movie information should
+and determine what information should
 be retrieved from TMDB.
+
+The messages after these instructions are the complete conversation history.
+Use that history to understand follow-up questions and pronouns. For example,
+if the user says "tell me more about it" or "recommend something similar",
+resolve "it" and "similar" using the most recent relevant movie or TV show
+mentioned in the conversation. Return the actual title in "query" when a
+follow-up refers to a specific title.
 
 Return ONLY valid JSON.
 
-Possible "type" values:
+Fields:
 
-1. "search"
-   The user is asking about a specific movie.
+"mediaType":
+- "movie" if the user is asking about movies / films
+- "tv" if the user is asking about TV shows, series,
+  seasons, episodes, or anime series
+- If it's unclear, use "movie"
 
-2. "discover"
-   The user wants movie recommendations
-   based on year, genre, or both.
-
-3. "none"
-   The question does not require movie
-   database information.
+"type":
+1. "search"   -> the user is asking about a specific title
+2. "discover" -> the user wants recommendations based on
+                 year, genre, or both
+3. "none"     -> the question does not require database info
 
 For "search":
-Return the movie title in "query".
+Return the title in "query".
 
 Example:
-
-User:
-"Tell me about Interstellar"
-
+User: "Tell me about Interstellar"
 Return:
-{
-  "type": "search",
-  "query": "Interstellar"
-}
+{ "type": "search", "mediaType": "movie", "query": "Interstellar" }
 
+Example:
+User: "What is Breaking Bad about?"
+Return:
+{ "type": "search", "mediaType": "tv", "query": "Breaking Bad" }
 
 For "discover":
-
-Extract:
-- year if mentioned
-- genre if mentioned
+Extract year and genre if mentioned.
 
 Example:
-
-User:
-"Recommend action movies from 2026"
-
+User: "Recommend action movies from 2026"
 Return:
-{
-  "type": "discover",
-  "year": 2026,
-  "genre": "Action"
-}
-
+{ "type": "discover", "mediaType": "movie", "year": 2026, "genre": "Action" }
 
 Example:
-
-User:
-"Give me some horror movies"
-
+User: "Suggest some comedy series"
 Return:
-{
-  "type": "discover",
-  "year": null,
-  "genre": "Horror"
-}
-
+{ "type": "discover", "mediaType": "tv", "year": null, "genre": "Comedy" }
 
 For "none":
-
 Example:
-
-User:
-"What does thriller mean?"
-
+User: "What does thriller mean?"
 Return:
-
-{
-  "type": "none"
-}
+{ "type": "none", "mediaType": "movie" }
 
 Do not include markdown.
 Do not include explanations.
 Return JSON only.
 `,
-        },
+      },
 
-        {
-          role: "user",
-          content: message,
-        },
-      ],
-    });
+      ...conversation,
+      {
+        role: "user",
+        content: message,
+      },
+    ],
+  });
 
-  const content =
-    response.choices[0]?.message?.content || "{}";
+  const content = response.choices[0]?.message?.content || "{}";
 
   try {
-    return JSON.parse(content);
-  } catch (error) {
-    console.error(
-      "Failed to parse AI analysis:",
-      content
-    );
+    // Remove code fences in case the model adds them
+    const cleaned = content.replace(/```json|```/g, "").trim();
+    return JSON.parse(cleaned);
+  } catch {
+    console.error("Failed to parse AI analysis:", content);
 
     return {
       type: "none",
+      mediaType: "movie",
     };
   }
 }
 
-
 // Generate the final answer
 export async function generateMovieAnswer(
   userMessage,
-  movies
+  items,
+  mediaType = "movie",
+  conversation = [],
 ) {
-  const movieContext = movies.map((movie) => ({
-    id: movie.id,
-    title: movie.title,
-    release_date: movie.release_date,
-    overview: movie.overview,
-    rating: movie.vote_average,
-    vote_count: movie.vote_count,
-    popularity: movie.popularity,
+  // Movies use title/release_date, TV shows use name/first_air_date
+  const context = items.map((item) => ({
+    id: item.id,
+    title: item.title || item.name,
+    release_date: item.release_date || item.first_air_date,
+    overview: item.overview,
+    rating: item.vote_average,
+    vote_count: item.vote_count,
+    popularity: item.popularity,
   }));
 
-  const response =
-    await groq.chat.completions.create({
-      model: "openai/gpt-oss-20b",
+  const label = mediaType === "tv" ? "TV show" : "movie";
 
-      messages: [
-        {
-          role: "system",
+  const response = await groq.chat.completions.create({
+    model: "openai/gpt-oss-20b",
 
-          content: `
-You are a helpful movie assistant.
+    messages: [
+      {
+        role: "system",
 
-You have access to movie information
+        content: `
+You are a helpful movie and TV show assistant.
+
+You have access to ${label} information
 retrieved from TMDB.
 
+The messages after these instructions contain the complete conversation
+history. The latest user question is a follow-up to that history, not an
+isolated question. Read the previous user and assistant messages before
+answering. Resolve words such as "it", "this movie", "that show", "the
+second one", and "similar" from the most recent relevant context. If the
+question depends on an earlier title, mention that title in your answer.
+
 Use the provided TMDB data when answering
-questions about movies.
+questions about movies and TV shows.
 
 IMPORTANT RULES:
 
-- Do not invent movies.
+- Do not invent movies or TV shows.
 - Do not invent ratings.
 - Do not invent release dates.
-- Do not invent movie information.
+- Do not invent any information.
 - Use the provided TMDB data as your source
-  for current movie information.
+  for current information.
 - If the data does not contain enough information,
   clearly say that you don't have enough information.
 - You can summarize and explain the information.
-- You can recommend movies from the provided list.
+- You can recommend titles from the provided list.
+- For TV shows, "release_date" is the first air date.
 
 Format your answers using Markdown.
 
@@ -184,28 +173,24 @@ Use:
 
 when appropriate.
 `,
-        },
+      },
 
-        {
-          role: "user",
-
-          content: `
+      ...conversation,
+      {
+        role: "user",
+        content: `
 User question:
 
 ${userMessage}
 
 
-TMDB movie data:
+TMDB ${label} data:
 
-${JSON.stringify(
-  movieContext,
-  null,
-  2
-)}
+${JSON.stringify(context, null, 2)}
 `,
-        },
-      ],
-    });
+      },
+    ],
+  });
 
   return (
     response.choices[0]?.message?.content ||
