@@ -6,6 +6,10 @@ import TvShows from "./components/TvShows/TvShows";
 import TvDetails from "./components/TvDetails/TvDetails";
 import PlaceholderPage from "./components/PlaceholderPage";
 import Chatbot from "./components/Chatbot/Chatbot";
+import LoginPage from "./components/LoginPage/LoginPage";
+import RegisterPage from "./components/RegisterPage/RegisterPage";
+import Wishlist from "./components/Wishlist/Wishlist";
+
 import "./App.css";
 
 export default function App() {
@@ -22,9 +26,12 @@ export default function App() {
           <Route path="/tv" element={<TvShows />} />
           <Route path="/tv/:id" element={<TvDetails />} />
           
-          <Route path="/wishlist" element={<PlaceholderPage title="Wishlist" />} />
-          <Route path="/login" element={<PlaceholderPage title="Log in" />} />
-          <Route path="/register" element={<PlaceholderPage title="Sign up" />} />
+      
+        
+           <Route path="/wishlist" element={<Wishlist />} />
+           <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+
           <Route
             path="*"
             element={

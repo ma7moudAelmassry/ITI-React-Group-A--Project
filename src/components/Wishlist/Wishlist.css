@@ -1,0 +1,128 @@
+.fk-wishlist-page {
+  min-height: calc(100vh - 64px);
+  background-color: var(--fk-bg, #0f1717);
+  color: var(--fk-text, #eef4f3);
+  padding: 40px 20px;
+  font-family: "DM Sans", system-ui, sans-serif;
+}
+
+.fk-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.fk-page-title {
+  font-family: "Fraunces", Georgia, serif;
+  font-size: 2rem;
+  margin-bottom: 30px;
+  color: var(--fk-primary-soft, #9dbcbc);
+}
+
+.fk-empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  background: var(--fk-surface, #172322);
+  border: 1px solid var(--fk-line, #2f4645);
+  border-radius: 12px;
+}
+
+.fk-empty-state p {
+  color: var(--fk-muted, #93aaa9);
+  font-size: 1.1rem;
+  margin-bottom: 20px;
+}
+
+.fk-movies-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 24px;
+}
+
+.fk-movie-card-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.fk-movie-card {
+  background: var(--fk-surface, #172322);
+  border: 1px solid var(--fk-line, #2f4645);
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s;
+  position: relative;
+}
+
+.fk-movie-card:hover {
+  transform: translateY(-4px);
+}
+
+.fk-movie-card img {
+  width: 100%;
+  height: 300px;
+  object-fit: cover;
+}
+
+.fk-movie-fallback {
+  height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--fk-muted, #93aaa9);
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.fk-movie-info {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1;
+  justify-content: space-between;
+}
+
+.fk-movie-info h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0;
+  color: var(--fk-text, #eef4f3);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.fk-movie-rating {
+  font-size: 0.85rem;
+  color: var(--fk-muted, #93aaa9);
+  margin-top: 4px;
+  margin-bottom: 0;
+}
+
+.fk-wishlist-heart-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(0, 0, 0, 0.6);
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  zIndex: 2;
+  transition: transform 0.2s;
+}
+
+.fk-wishlist-heart-btn:hover {
+  transform: scale(1.1);
+}
+
+.fk-remove-btn {
+  width: 100%;
+  padding: 6px 12px;
+  font-size: 0.85rem;
+}

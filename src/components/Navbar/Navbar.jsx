@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
+import Swal from "sweetalert2";
 import SearchBar from "./SearchBar";
 import "./Navbar.css";
 
@@ -20,10 +21,50 @@ function HeartIcon({ filled }) {
   );
 }
 
-export default function Navbar({ wishlistCount = 0, user = null, onLogout }) {
+export default function Navbar({ wishlistCount = 0 }) {
   const { pathname } = useLocation();
   const [open, setOpen] = useState(false);
-         
+  const [currentUser, setCurrentUser] = useState(null);
+
+  useEffect(() => {
+    const savedUser = localStorage.getItem("current_user");
+    if (savedUser) {
+      setCurrentUser(JSON.parse(savedUser));
+    }
+  }, []);
+
+  
+  const showSwatToast = (msg, iconType) => {
+    Swal.fire({
+      toast: true,
+      position: "top-end",
+      icon: iconType,
+      title: msg,
+      showConfirmButton: false,
+      timer: 4000,
+      timerProgressBar: true,
+      background: "#172322",
+      color: "#eef4f3",
+      didOpen: (toast) => {
+        toast.addEventListener("mouseenter", Swal.stopTimer);
+        toast.addEventListener("mouseleave", Swal.resumeTimer);
+      }
+    });
+  };
+
+  const handleLogout = (e) => {
+    e.preventDefault();
+    localStorage.removeItem("current_user");
+    setCurrentUser(null);
+    
+    
+    showSwatToast("Logged out successfully!", "success");
+
+    setTimeout(() => {
+      window.location.href = "/login";
+    }, 1500);
+  };
+          
   const isMovies =
     pathname === "/" || pathname.startsWith("/movie") || pathname.startsWith("/search");
   const isTv = pathname.startsWith("/tv");
@@ -59,23 +100,22 @@ export default function Navbar({ wishlistCount = 0, user = null, onLogout }) {
               TV shows
             </Link>
             <Link to="/wishlist" className={cls(isWishlist)} aria-current={current(isWishlist)}>
-              <HeartIcon filled={wishlistCount > 0} />
+              <HeartIcon />
               Wishlist
-              <span className="fk-count" aria-label={`${wishlistCount} items in wishlist`}>
-                {wishlistCount}
-              </span>
+             
             </Link>
           </nav>
 
           <SearchBar onSearchSubmit={() => setOpen(false)} />
 
           <div className="fk-auth">
-            {user ? (
+            {currentUser ? (
               <>
-                <span className="fk-hello">Hi, {user.name?.split(" ")[0]}</span>
-                <Link to="/" className="fk-btn fk-btn-ghost" onClick={onLogout}>
+                <span className="fk-hello">Hi, {currentUser.name?.split(" ")[0]}</span>
+                
+                <button onClick={handleLogout} className="fk-btn fk-btn-ghost">
                   Log out
-                </Link>
+                </button>
               </>
             ) : (
               <>
