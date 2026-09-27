@@ -1,19 +1,29 @@
-# اعمل ملف .env في الملف الكبير فريح package.json وحط فيه ال ApiKey
+# ITI React G4 Team A
+
+## names: 
+    -محمد جلال عبدالرحمن
+        --Movies & Movies-details
+    -امير محمد نوفل
+        --Tv-Shows & Details
+    -محمود عبدالسلام حسن
+        --Chatbot
+    -روان طارق كيلاني
+        --Shearch & Whishlist
+    -رنا محمد العبد
+        --Login & Resgister
 
 
-# React + Vite
+## ApiKeys in .env file:
+    VITE_GROQ_API_KEY=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
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+    VITE_TMDB_ACCESS_TOKEN=eyJhbGciOiJIUzI1NiJ9.                        eyJhdWQiOiI0ZGJlYzY5OTRhYWJiMDcxYjc1ODlkMWFkNTI0YjQ4YSIsIm5iZiI6MTc4OTkyMTY0MC4yNDg5OTk4LCJzdWIiOiI2YWIwMDk2ODUxYTg1ZWIzZTA0YzhiOWUiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.izblZEP668jKD3lGxrp2xPPIMpWx6dLcY6aZmxRMVkc
 
-Currently, two official plugins are available:
+    
+## Github Repo:
+    https://github.com/ma7moudAelmassry/ITI-React-Group-A--Project
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
 
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Packages Installed:
+    -groq-sdk
+    -react-markdown
+    -sweetalert2

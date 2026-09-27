@@ -30,7 +30,7 @@ const movieGenreIds = {
   war: 10752,
 };
 
-// TMDB genre IDs (TV) - different from movies
+// TMDB genre IDs (TV)
 const tvGenreIds = {
   action: 10759,
   adventure: 10759,
